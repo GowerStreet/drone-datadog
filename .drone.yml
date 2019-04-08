@@ -1,0 +1,36 @@
+branches: [ master ]
+
+clone:
+  git:
+    image: plugins/git:next
+    pull: true
+
+slack: &slack
+  image: plugins/slack
+  webhook: https://hooks.slack.com/services/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
+  username: Drone CI
+  icon_url: https://pbs.twimg.com/profile_images/573911705505259520/rShq67tG_400x400.png
+
+pipeline:
+  build:
+    image: golang:1.12.2-alpine3.9
+    pull: true
+    commands:
+      - apk add git
+      - "go get github.com/kelseyhightower/envconfig"
+      - "go build -o drone-datadog"
+    environment:
+      - TAG=1.0.${DRONE_BUILD_NUMBER}
+    secrets:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+
+  publish-latest-image:
+    image: plugins/docker
+    build_args:
+      - "TAG=1.0.${DRONE_BUILD_NUMBER}"
+    repo: gowerstreet/drone-datadog
+    secrets: [docker_username, docker_password]
+    tags:
+      - latest
+      - "1.0.${DRONE_BUILD_NUMBER}"
