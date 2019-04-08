@@ -1,8 +1,10 @@
 .PHONY: docker
 
 EXECUTABLE ?= drone-datadog
-IMAGE ?= urbint/drone-datadog
+IMAGE ?= gowerstreet/drone-datadog:$(TAG)
 
-docker:
+build:
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o $(EXECUTABLE)
+
+docker: build
 	docker build --rm -t $(IMAGE) .

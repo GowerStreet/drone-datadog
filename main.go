@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/urbint/drone-datadog/datadog"
+	"./datadog"
 )
 
 type Args struct {
